@@ -1,0 +1,90 @@
+<form [formGroup]="bookForm" (submit)="submitBook()">
+    <div class="container">
+        <div class="row">
+            <!-- Name -->
+            <div class="col-4">
+                <label>Patient Name</label>
+                <input type="text" placeholder="Name" formControlName="name" minlength="1" maxlength="50">
+                <ng-container
+                    *ngIf="(bookForm.controls['name'].hasError('required') && isSubmited) || bookForm.controls['name'].hasError('required') && bookForm.controls['name'].touched">
+                    <span>Please add your name.</span>
+                </ng-container>
+                <ng-container
+                    *ngIf="(bookForm.controls['name'].hasError('pattern') && isSubmited) || bookForm.controls['name'].hasError('required') && bookForm.controls['name'].touched">
+                    <span>Please enter a valid name.</span>
+                </ng-container>
+                <ng-container
+                    *ngIf="(bookForm.controls['name'].hasError('maxlength') || bookForm.controls['name'].hasError('minlength')) && isSubmited ">
+                    <span>The name must not be less than one letter and not more than 50 letters.</span>
+                </ng-container>
+
+            </div>
+            <!-- phone -->
+            <div class="col-4">
+                <label>Patient Phone</label>
+                <input type="text" placeholder="Phone" formControlName="phone" maxlength="9" minlength="9">
+                <ng-container *ngIf="bookForm.controls['phone'].hasError('pattern') && isSubmited ">
+                    <span>Please enter a valid number.</span>
+                </ng-container>
+                <ng-container *ngIf="bookForm.controls['phone'].hasError('required') && isSubmited ">
+                    <span>Please enter the phone number.</span>
+                </ng-container>
+                <ng-container
+                    *ngIf="(bookForm.controls['phone'].hasError('maxlength') || bookForm.controls['phone'].hasError('minlength') && isSubmited) ">
+                    <span>The phone number length must be 9 digits.</span>
+                </ng-container>
+            </div>
+            <!-- date -->
+            <div class="col-4">
+                <label>Date</label>
+                <input placeholder="Date" formControlName="date" name="dp" [(ngModel)]="model" ngbDatepicker
+                    #d="ngbDatepicker" [minDate]="minDate">
+                <button (click)="d.toggle()" type="button"><i class="fa fa-calendar" aria-hidden="true"></i></button>
+                <ng-container *ngIf="bookForm.controls['date'].hasError('required') && isSubmited">
+                    <span>Please select the date.</span>
+                </ng-container>
+            </div>
+        </div>
+        <div class="row">
+            <!-- select branch -->
+            <div class="col-4">
+                <ng-select formControlName="branch" [items]="brachList" bindValue="branchId" bindLabel="branchName"
+                    [searchable]="true" [placeholder]="'Select Branch'"
+                    (change)="getDeptList(bookForm.controls['branch'].value)"></ng-select>
+                <ng-container *ngIf="bookForm.controls['branch'].hasError('required') && isSubmited">
+                    <span>Please select branch</span>
+                </ng-container>
+            </div>
+            <!-- select department -->
+            <div class="col-4">
+                <ng-select formControlName="dept" [searchable]="true" [placeholder]="'Select Department'"
+                    [readonly]="bookForm.controls['branch'].value == null"
+                    (change)="getDoctorList(bookForm.controls['dept'].value)">
+                    <ng-container *ngFor="let item of deptList">
+                        <ng-option *ngIf="item?.matched" [value]="item?.deptId">{{item?.deptName}}</ng-option>
+                    </ng-container>
+                </ng-select>
+                <ng-container *ngIf="bookForm.controls['dept'].hasError('required') && isSubmited">
+                    <span>Please select department</span>
+                </ng-container>
+            </div>
+            <!-- select doctor -->
+            <div class="col-4">
+                <ng-select formControlName="doctor" [searchable]="true" [placeholder]="'Select Department'"
+                    [readonly]="bookForm.controls['dept'].value == null">
+                    <ng-container *ngFor="let item of doctorList">
+                        <ng-option *ngIf="item?.docId == bookForm.controls['dept'].value"
+                            [value]="item?.docId">{{item?.docName}}</ng-option>
+                    </ng-container>
+                </ng-select>
+                <ng-container *ngIf="bookForm.controls['doctor'].hasError('required') && isSubmited">
+                    <span>Please select department</span>
+                </ng-container>
+            </div>
+        </div>
+        <div class="row">
+            <button>Book</button>
+        </div>
+    </div>
+
+</form>
